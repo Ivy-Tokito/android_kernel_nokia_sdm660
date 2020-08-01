@@ -674,6 +674,22 @@ ifdef CONFIG_CC_WERROR
 KBUILD_CFLAGS	+= -Werror
 endif
 
+# Cortex-A73 specific optimization (mtune)
+# Applies to Qualcomm Snapdragon processors: 460, 632, 636, 660, 662, 665, 680, 685, 6s 4G Gen 1, 835
+# Note: This optimization may negatively impact performance on processors not listed above.
+ifdef CONFIG_PROFILE_ALL_BRANCHES
+KBUILD_CFLAGS	+= -O2
+else
+ifeq ($(cc-name),gcc)
+KBUILD_CFLAGS   += -O3
+KBUILD_CFLAGS   += -mcpu=cortex-a73 -mtune=cortex-a73
+endif
+ifeq ($(cc-name),clang)
+KBUILD_CFLAGS   += -O3
+KBUILD_CFLAGS   += -mtune=cortex-a73 -mtune=cortex-a73
+endif
+endif
+
 # disable warning: tokens terminating statement expression are separated by whitespace on latest clang 12
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS	+= $(call cc-disable-warning,compound-token-split-by-space)
