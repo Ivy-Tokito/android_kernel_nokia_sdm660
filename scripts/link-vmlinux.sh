@@ -115,7 +115,7 @@ modpost_link()
 			--end-group"
 	fi
 
-	if [ -n "${CONFIG_LTO_CLANG}" ]; then
+	if [ -n "${CONFIG_LTO}" ]; then
 		# This might take a while, so indicate that we're doing
 		# an LTO link
 		info LTO vmlinux.o
@@ -123,7 +123,20 @@ modpost_link()
 		info LD vmlinux.o
 	fi
 
-	${LD} ${LDFLAGS} -r -o ${1} $(modversions) ${objects}
+	${LDFINAL} ${LDFLAGS} -r -o ${1} $(modversions) ${objects}
+}
+
+# If CONFIG_LTO_CLANG is selected, we postpone running recordmcount until
+# we have compiled LLVM IR to an object file.
+recordmcount()
+{
+	if [ -z "${CONFIG_LTO_CLANG}" ]; then
+		return
+	fi
+
+	if [ -n "${CONFIG_FTRACE_MCOUNT_RECORD}" ]; then
+		scripts/recordmcount ${RECORDMCOUNT_FLAGS} $*
+	fi
 }
 
 # Link of vmlinux
@@ -135,7 +148,7 @@ vmlinux_link()
 	local objects
 
 	if [ "${SRCARCH}" != "um" ]; then
-		local ld=${LD}
+		local ld=${LDFINAL}
 		local ldflags="${LDFLAGS} ${LDFLAGS_vmlinux}"
 
 		if [ -n "${LDFINAL_vmlinux}" ]; then
