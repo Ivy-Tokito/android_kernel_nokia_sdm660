@@ -730,11 +730,11 @@ KBUILD_CFLAGS	+= -O2
 else
 ifeq ($(cc-name),gcc)
 KBUILD_CFLAGS   += -O3
-KBUILD_CFLAGS   += -mcpu=cortex-a73 -mtune=cortex-a73
+#KBUILD_CFLAGS   += -mcpu=cortex-a73 -mtune=cortex-a73
 endif
 ifeq ($(cc-name),clang)
 KBUILD_CFLAGS   += -O3
-KBUILD_CFLAGS   += -mtune=cortex-a73 -mtune=cortex-a73
+#KBUILD_CFLAGS   += -mtune=cortex-a73 -mtune=cortex-a73
 endif
 endif
 
